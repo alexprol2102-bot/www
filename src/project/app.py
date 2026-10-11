@@ -67,7 +67,7 @@ def user_login():
         user = cur.fetchone()
         cnx.close()
         
-        # Проверяем, существует ли пользователь и совпадает ли хеш пароля
+        # проверяем, существует ли пользователь и совпадает ли хеш пароля
         if user and check_password_hash(user['password_hash'], password):
             session['user_id'] = user['id']
             session['username'] = user['username']
@@ -87,7 +87,7 @@ def logout():
 
 @app.route("/")
 def registration():
-    # Если уже авторизован — пускаем в ЛК
+    # есть авторизация => личный кабинет
     if 'user_id' in session:
         return redirect(url_for('to_lk'))
     return render_template('registration.html')
@@ -100,7 +100,7 @@ def login():
 
 @app.route("/lk")
 def to_lk():
-    # Проверка, авторизован ли пользователь
+    # проврека авторизации
     if 'user_id' not in session:
         return redirect(url_for('login'))
         
@@ -111,8 +111,8 @@ def to_lk():
     }
     return render_template('lk.html', user=udt)
 
-REQUEST_COST = 50      # обычная цена запроса (поставь свою)
-PENALTY = 5000         # штраф за пустую строку
+REQUEST_COST = 50      # стоимость запроса
+PENALTY = 5000         # штраф за тупость
 
 @app.route("/make_request", methods=['POST'])
 def make_request():
@@ -123,7 +123,7 @@ def make_request():
     text = (data.get('text') or '').strip()
     current_balance = session.get('balance', 0)
 
-    # Нет денег на обычный запрос: ни штрафа, ни ответа, только просьба пополнить
+    # нет денег => надо пополнить
     if current_balance < REQUEST_COST:
         return jsonify({"result": False, "error": "денег закинь"})
 
