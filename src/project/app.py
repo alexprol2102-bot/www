@@ -7,7 +7,6 @@ app = Flask(__name__)
 app.secret_key = 'super_secret_key_for_sessions' 
 
 # Вынесем подключение к БД в отдельную функцию для удобства
-'''
 def get_db_connection():
     return mysql.connector.connect(
         host="185.114.247.43",
@@ -26,6 +25,7 @@ def get_db_connection():
         password="",
         connection_timeout=5
     )
+'''
 
 @app.route('/user_register', methods=['POST'])
 def user_register():
@@ -111,6 +111,13 @@ def to_lk():
     }
     return render_template('lk.html', user=udt)
 
+@app.route("/history")
+def history():
+    if 'user_id' in session:
+        
+        return render_template('lk.html', user=user['user'])
+    else:
+        return render_template('login.html')
 REQUEST_COST = 50      # стоимость запроса
 PENALTY = 5000         # штраф за тупость
 
