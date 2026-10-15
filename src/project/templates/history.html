@@ -1,1 +1,105 @@
- 
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>История транзакций</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #0f172a;
+            background-image:
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.15) 0px, transparent 50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #334155;
+            padding: 20px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            padding: 40px 32px;
+            border-radius: 20px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 520px;
+        }
+
+        .card h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0f172a;
+            letter-spacing: -0.02em;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .tx-list { max-height: 60vh; overflow-y: auto; }
+
+        .tx {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            background: #f8fafc;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 10px;
+        }
+
+        .tx-desc { font-size: 15px; font-weight: 600; color: #1e293b; }
+        .tx-date { font-size: 12px; color: #64748b; margin-top: 2px; }
+        .tx-amount { font-size: 16px; font-weight: 700; }
+        .plus { color: #10b981; }
+        .minus { color: #ef4444; }
+
+        .empty { text-align: center; color: #64748b; font-size: 14px; }
+
+        .switch-link {
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid #f1f5f9;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .switch-link a { color: #6366f1; font-weight: 600; text-decoration: none; }
+        .switch-link a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>История транзакций</h2>
+
+        <div class="tx-list">
+            {% for t in transactions %}
+            <div class="tx">
+                <div>
+                    <div class="tx-desc">{{ t.description }}</div>
+                    <div class="tx-date">{{ t.created_at.strftime('%d.%m.%Y %H:%M') }}</div>
+                </div>
+                <div class="tx-amount {{ 'plus' if t.amount > 0 else 'minus' }}">
+                    {{ '+' if t.amount > 0 }}{{ t.amount }} ₽
+                </div>
+            </div>
+            {% else %}
+            <p class="empty">Транзакций пока нет</p>
+            {% endfor %}
+        </div>
+
+        <div class="switch-link">
+            <a href="/lk">← Назад в личный кабинет</a>
+        </div>
+    </div>
+</body>
+</html>
