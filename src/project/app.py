@@ -7,6 +7,7 @@ app = Flask(__name__)
 app.secret_key = 'super_secret_key_for_sessions' 
 
 # Вынесем подключение к БД в отдельную функцию для удобства
+'''
 def get_db_connection():
     return mysql.connector.connect(
         host="185.114.247.43",
@@ -25,7 +26,15 @@ def get_db_connection():
         password="",
         connection_timeout=5
     )
-'''
+
+
+def add_transaction(cur, user_id, title, amount, balance_after):
+    """Пишет в историю тем же курсором, поэтому коммитится вместе с изменением баланса."""
+    cur.execute(
+        'INSERT INTO `transactions`(`user_id`, `title`, `amount`, `balance_after`) VALUES (%s, %s, %s, %s)',
+        (user_id, title, amount, balance_after)
+    )
+
 
 @app.route('/user_register', methods=['POST'])
 def user_register():
@@ -39,8 +48,9 @@ def user_register():
         cnx = get_db_connection()
         cur = cnx.cursor()
         cur.execute('INSERT INTO `users`(`username`, `email`, `password_hash`, `balance`) VALUES (%s, %s, %s, %s)', (name, email, hashed_password, 100))
-        cnx.commit()
         user_id = cur.lastrowid
+        add_transaction(cur, user_id, 'Бонус за регистрацию', 100, 100)
+        cnx.commit()
         cnx.close()
 
         session['user_id'] = user_id
@@ -113,11 +123,25 @@ def to_lk():
 
 @app.route("/history")
 def history():
-    if 'user_id' in session:
-        
-        return render_template('lk.html', user=user['user'])
-    else:
-        return render_template('login.html')
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    try:
+        cnx = get_db_connection()
+        cur = cnx.cursor(dictionary=True)
+        cur.execute(
+            'SELECT title, amount, balance_after, created_at FROM transactions '
+            'WHERE user_id=%s ORDER BY created_at DESC, id DESC LIMIT 200',
+            (session['user_id'],)
+        )
+        items = cur.fetchall()
+        cnx.close()
+    except Exception as e:
+        print("Ошибка загрузки истории:", e)
+        items = []
+
+    return render_template('history.html', items=items)
+
 REQUEST_COST = 50      # стоимость запроса
 PENALTY = 5000         # штраф за тупость
 
@@ -145,6 +169,10 @@ def make_request():
         cnx = get_db_connection()
         cur = cnx.cursor()
         cur.execute('UPDATE users SET balance=%s WHERE id=%s', (new_balance, session['user_id']))
+        if penalty:
+            add_transaction(cur, session['user_id'], 'Штраф за пустой запрос', -(current_balance - new_balance), new_balance)
+        else:
+            add_transaction(cur, session['user_id'], 'Запрос', -REQUEST_COST, new_balance)
         cnx.commit()
         cnx.close()
 
@@ -164,6 +192,7 @@ def topup():
         cnx = get_db_connection()
         cur = cnx.cursor()
         cur.execute('UPDATE users SET balance=%s WHERE id=%s', (new_balance, session['user_id']))
+        add_transaction(cur, session['user_id'], 'Пополнение баланса', 1000, new_balance)
         cnx.commit()
         cnx.close()
 
@@ -172,5 +201,6 @@ def topup():
     except Exception as e:
         print("Ошибка пополнения:", e)
         return jsonify({"result": False, "error": "Ошибка базы данных"})
+
 if __name__ == '__main__':
     app.run(debug=True)
