@@ -362,6 +362,38 @@
             color: #64748b;
             margin-top: 2px;
         }
+        .chat-balance {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            align-self: flex-end;
+            margin-bottom: 2px;
+            padding: 6px 12px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%);
+            border: 1.5px solid rgba(99, 102, 241, 0.25);
+            font-size: 14px;
+            font-weight: 700;
+            color: #0f172a;
+            white-space: nowrap;
+        }
+
+        .chat-balance svg {
+            width: 16px;
+            height: 16px;
+            fill: none;
+            stroke: #6366f1;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            flex-shrink: 0;
+        }
+
+        .chat-balance .currency {
+            font-weight: 600;
+            color: #6366f1;
+            margin-left: 2px;
+        }
 
         .chat-close {
             color: #94a3b8;
@@ -559,6 +591,14 @@
                     <h3>Чат с ИИ</h3>
                     <div class="chat-hint">Локальная модель · каждое сообщение — 3 ₽</div>
                 </div>
+                <div class="chat-balance">
+                    <svg viewBox="0 0 24 24">
+                        <rect x="2" y="6" width="20" height="14" rx="2" ry="2"></rect>
+                        <path d="M2 10h20"></path>
+                        <circle cx="17" cy="15" r="1.5" fill="#6366f1" stroke="none"></circle>
+                    </svg>
+                    <span id="chat-balance-display">{{ user.balance }}<span class="currency">₽</span></span>
+                </div>
                 <span class="chat-close" id="chat-close" title="Закрыть">&times;</span>
             </div>
             <div class="chat-messages" id="chat-messages">
@@ -582,12 +622,15 @@
         var input = document.getElementById('chat-input');
         var sendBtn = document.getElementById('chat-send');
         var balanceEl = document.getElementById('balance-display');
+        var chatBalanceEl = document.getElementById('chat-balance-display');
         var history = [];      // [{role: 'user'|'assistant', content: '...'}]
         var busy = false;
 
         function setBalance(value) {
             if (value === undefined || value === null) return;
-            balanceEl.innerHTML = value + '<span class="currency">₽</span>';
+            var html = value + '<span class="currency">₽</span>';
+            if (balanceEl) balanceEl.innerHTML = html;
+            if (chatBalanceEl) chatBalanceEl.innerHTML = html;
         }
 
         function addMessage(text, cls) {
