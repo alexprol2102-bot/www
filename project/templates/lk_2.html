@@ -633,6 +633,25 @@
             if (chatBalanceEl) chatBalanceEl.innerHTML = html;
         }
 
+        // Автоматически зеркалим баланс из карточки в модалку чата.
+        // Это ловит и пополнение (script_2.js), и любые другие изменения #balance-display.
+        if (balanceEl && chatBalanceEl) {
+            var balanceObserver = new MutationObserver(function () {
+                var html = balanceEl.innerHTML;
+                if (chatBalanceEl.innerHTML !== html) {
+                    chatBalanceEl.innerHTML = html;
+                }
+            });
+            balanceObserver.observe(balanceEl, {
+                childList: true,
+                subtree: true,
+                characterData: true
+            });
+        }
+
+        // На всякий случай даём script_2.js возможность обновлять баланс через единую функцию
+        window.setBalance = setBalance;
+
         function addMessage(text, cls) {
             if (empty) { empty.remove(); empty = null; }
             var div = document.createElement('div');
