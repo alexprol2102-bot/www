@@ -7,7 +7,6 @@ $(document).ready(function(){
         e.preventDefault();
         const password = $('#password').val();
         const confirmPassword = $('#confirm_password').val();
-
         if (password !== confirmPassword) {
             alert('Пароли не совпадают!');
             return;
@@ -31,7 +30,7 @@ $(document).ready(function(){
         });
     });
 
-   $('#lg').on('submit',function(e){
+    $('#lg').on('submit', function(e){
         e.preventDefault();
         $.ajax({
             url: '/user_login',
@@ -39,7 +38,7 @@ $(document).ready(function(){
             contentType: 'application/json',
             data: JSON.stringify({
                 uname: $('#username').val(),
-                p_hash: $('#password').val() 
+                p_hash: $('#password').val()
             }),
             success: function(response) {
                 if(response.result) {
@@ -51,32 +50,26 @@ $(document).ready(function(){
         });
     });
 
-    $('#topup-btn').on('click', function() {
-        $('#topupModal').fadeIn(200);
+    $(document).on('click', '.close', function() {
+        $('#topupModal').removeClass('open').css('display','');
     });
 
-    $('.close').on('click', function() {
-        $('#topupModal').fadeOut(200);
-    });
-
-    $(window).on('click', function(event) {
-        if ($(event.target).is('#topupModal')) {
-            $('#topupModal').fadeOut(200);
+    $(document).on('click', '#topupModal', function(e) {
+        if ($(e.target).is('#topupModal')) {
+            $('#topupModal').removeClass('open').css('display','');
         }
     });
 
-    $('.quick-btn').on('click', function() {
-        const amount = $(this).data('amount');
-        $('#amount-input').val(amount);
+    $(document).on('click', '.quick-btn', function() {
+        $('#amount-input').val($(this).data('amount'));
     });
 
-    $('#confirm-topup').on('click', function() {
+    $(document).on('click', '#confirm-topup', function() {
         const amount = parseInt($('#amount-input').val());
         if (!amount || amount < 1 || amount > 10000) {
             alert('Введите сумму от 1 до 10000 рублей');
             return;
         }
-
         $.ajax({
             url: '/topup_balance',
             method: 'POST',
@@ -85,9 +78,10 @@ $(document).ready(function(){
             success: function(response) {
                 if(response.result) {
                     $('#balance-display').html(response.new_balance + '<span class="currency">₽</span>');
-                    $('#topupModal').fadeOut(200);
+                    $('#chat-balance-display').text(response.new_balance + ' ₽');
+                    $('#topupModal').removeClass('open').css('display','');
                     $('#amount-input').val('');
-                    showBanner('🎄 Баланс пополнен на ' + amount + ' ₽!');
+                    showBanner('✅ Баланс пополнен на ' + amount + ' ₽!');
                 } else {
                     alert('Ошибка: ' + response.error);
                 }

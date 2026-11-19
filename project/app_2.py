@@ -6,7 +6,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 '''
 #слабая
 REPO_ID = "bartowski/Qwen2.5-0.5B-Instruct-GGUF"
-FILENAME = "Qwen2.5-0.5B-Instruct-Q4_K_M.gguf
+FILENAME = "Qwen2.5-0.5B-Instruct-Q4_K_M.gguf"
+
 '''
 
 REPO_ID = "bartowski/Qwen2.5-3B-Instruct-GGUF"
@@ -24,7 +25,7 @@ llm = Llama.from_pretrained(
 )
 print("Модель успешно загружена.")
 
-'''
+
 def get_db_connection():
     return mysql.connector.connect(
         host="185.114.247.43",
@@ -43,7 +44,7 @@ def get_db_connection():
         password="",
         connection_timeout=5
     )
-
+'''
 @app.route('/user_register', methods=['POST'])
 def user_register():
     req = request.get_json()
@@ -126,8 +127,8 @@ def api_chat():
 
     output = llm.create_chat_completion(
         messages=messages,
-        max_tokens=150,
-        temperature=0.7
+        max_tokens=300,
+        temperature=0.5
     )
 
     reply = output['choices'][0]['message']['content'].strip()
@@ -227,8 +228,8 @@ def topup_balance():
     req = request.get_json()
     amount = req.get('amount', 0)
 
-    if not isinstance(amount, (int, float)) or amount < 1 or amount > 10000:
-        return jsonify({"result": False, "error": "Сумма должна быть от 1 до 10000 рублей"})
+    if not isinstance(amount, (int, float)) or amount <= 0 or amount > 5000:
+        return jsonify({"result": False, "error": "Сумма должна быть от 1 до 5000 рублей"})
 
     try:
         cnx = get_db_connection()

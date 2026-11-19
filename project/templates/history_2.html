@@ -4,135 +4,375 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>История операций</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg: #f9fafb;
+            --surface: #ffffff;
+            --accent: #059669;
+            --accent-dark: #047857;
+            --accent-light: #ecfdf5;
+            --text: #111827;
+            --muted: #6b7280;
+            --border: #e5e7eb;
+            --sidebar-bg: #064e3b;
+            --sidebar-text: rgba(255,255,255,0.75);
+            --sidebar-active: rgba(255,255,255,0.12);
+            --plus: #059669;
+            --minus: #dc2626;
+        }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: #0f172a;
-            background-image:
-                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.15) 0px, transparent 50%);
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
+            font-family: 'Manrope', system-ui, sans-serif;
+            background: var(--bg);
             min-height: 100vh;
-            color: #334155;
-            padding: 20px;
-        }
-
-        .card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(12px);
-            padding: 32px;
-            border-radius: 20px;
-            box-shadow:
-                0 20px 25px -5px rgba(0, 0, 0, 0.1),
-                0 8px 10px -6px rgba(0, 0, 0, 0.05),
-                0 0 0 1px rgba(255, 255, 255, 0.4) inset;
-            width: 100%;
-            max-width: 560px;
-            margin: 20px 0;
-        }
-
-        .header { text-align: center; margin-bottom: 24px; }
-
-        .header h2 {
-            font-size: 24px;
-            font-weight: 700;
-            color: #0f172a;
-            letter-spacing: -0.02em;
-            margin-bottom: 8px;
-        }
-
-        .header p { font-size: 14px; color: #64748b; }
-
-        .list { display: flex; flex-direction: column; gap: 10px; }
-
-        .item {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 12px;
-            padding: 14px 16px;
-            background: #f8fafc;
-            border: 1.5px solid #e2e8f0;
-            border-radius: 12px;
         }
 
-        .item-title { font-size: 15px; font-weight: 600; color: #1e293b; }
-        .item-time { font-size: 12px; color: #94a3b8; margin-top: 4px; }
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: 240px;
+            flex-shrink: 0;
+            background: var(--sidebar-bg);
+            display: flex;
+            flex-direction: column;
+            padding: 28px 0;
+            position: fixed;
+            top: 0; bottom: 0; left: 0;
+        }
 
-        .item-right { text-align: right; white-space: nowrap; }
-        .amount { font-size: 16px; font-weight: 700; }
-        .amount.plus { color: #10b981; }
-        .amount.minus { color: #ef4444; }
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 24px 32px;
+        }
 
-        .empty {
-            text-align: center;
-            padding: 32px 16px;
-            color: #64748b;
+        .sidebar-logo-icon {
+            width: 36px; height: 36px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .sidebar-logo-icon svg {
+            width: 20px; height: 20px;
+            stroke: #fff; fill: none;
+            stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+        }
+
+        .sidebar-logo-text {
+            font-size: 18px;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -0.02em;
+        }
+
+        .nav-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: rgba(255,255,255,0.35);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 0 24px 10px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 24px;
             font-size: 14px;
-            background: #f8fafc;
-            border: 1.5px dashed #e2e8f0;
-            border-radius: 12px;
+            font-weight: 600;
+            color: var(--sidebar-text);
+            text-decoration: none;
+            transition: background 0.15s, color 0.15s;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            font-family: inherit;
+        }
+
+        .nav-item:hover { background: var(--sidebar-active); color: #fff; }
+        .nav-item.active { background: rgba(5, 150, 105, 0.3); color: #fff; }
+
+        .nav-item svg {
+            width: 16px; height: 16px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round; stroke-linejoin: round;
+            flex-shrink: 0;
+        }
+
+        .sidebar-spacer { flex: 1; }
+
+        .sidebar-user {
+            padding: 16px 24px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .sidebar-user-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .sidebar-balance {
+            font-size: 12px;
+            color: #34d399;
+            margin-top: 2px;
+            font-weight: 600;
+        }
+
+        /* ===== MAIN ===== */
+        .main {
+            margin-left: 240px;
+            flex: 1;
+            padding: 32px 40px;
+            max-width: calc(100% - 240px);
+        }
+
+        .page-header {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            margin-bottom: 28px;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text);
+            letter-spacing: -0.03em;
+        }
+
+        .page-sub {
+            font-size: 14px;
+            color: var(--muted);
+            margin-top: 4px;
         }
 
         .back-link {
-            margin-top: 24px;
-            padding-top: 20px;
-            border-top: 1px solid #f1f5f9;
-            text-align: center;
+            display: flex;
+            align-items: center;
+            gap: 6px;
             font-size: 14px;
-        }
-
-        .back-link a {
-            color: #6366f1;
             font-weight: 600;
+            color: var(--accent);
             text-decoration: none;
         }
 
-        .back-link a:hover { color: #4f46e5; text-decoration: underline; }
+        .back-link:hover { text-decoration: underline; }
+
+        /* ===== SUMMARY ROW ===== */
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .sum-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 18px 24px;
+        }
+
+        .sum-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 6px;
+        }
+
+        .sum-value {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--text);
+            letter-spacing: -0.03em;
+        }
+
+        .sum-value.green { color: var(--plus); }
+        .sum-value.red { color: var(--minus); }
+
+        /* ===== TABLE ===== */
+        .table-wrap {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .table-head {
+            display: grid;
+            grid-template-columns: 1fr 160px 100px;
+            padding: 12px 20px;
+            background: #f9fafb;
+            border-bottom: 1px solid var(--border);
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .tx-row {
+            display: grid;
+            grid-template-columns: 1fr 160px 100px;
+            padding: 14px 20px;
+            border-bottom: 1px solid #f9fafb;
+            align-items: center;
+            transition: background 0.1s;
+        }
+
+        .tx-row:last-child { border-bottom: none; }
+        .tx-row:hover { background: #fafafa; }
+
+        .tx-desc {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .tx-time {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+
+        .tx-date {
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .tx-amount {
+            font-size: 15px;
+            font-weight: 800;
+            text-align: right;
+        }
+
+        .tx-amount.plus { color: var(--plus); }
+        .tx-amount.minus { color: var(--minus); }
+
+        .empty-state {
+            padding: 48px 20px;
+            text-align: center;
+        }
+
+        .empty-state-icon {
+            font-size: 36px;
+            margin-bottom: 12px;
+        }
+
+        .empty-state-text {
+            font-size: 15px;
+            color: var(--muted);
+            font-weight: 500;
+        }
+
+        @media (max-width: 900px) {
+            .sidebar { display: none; }
+            .main { margin-left: 0; max-width: 100%; padding: 20px; }
+            .table-head { grid-template-columns: 1fr 80px; }
+            .table-head .col-date { display: none; }
+            .tx-row { grid-template-columns: 1fr 80px; }
+            .tx-row .tx-date { display: none; }
+            .summary { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
 
-    <div class="card">
-        <div class="header">
-            <h2>История операций</h2>
-            <p>Все пополнения и списания по вашему балансу</p>
+<nav class="sidebar">
+    <div class="sidebar-logo">
+        <div class="sidebar-logo-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
         </div>
+        <span class="sidebar-logo-text">SmartPay</span>
+    </div>
 
-        {% if user.transactions %}
-        <div class="list">
-            {% for tx in user.transactions %}
-            <div class="item">
-                <div>
-                    <div class="item-title">{{ tx.description }}</div>
-                    <div class="item-time">{{ tx.created_at.strftime('%d.%m.%Y %H:%M:%S') }}</div>
-                </div>
-                <div class="item-right">
-                    {% if tx.amount > 0 %}
-                    <div class="amount plus">+{{ tx.amount }} ₽</div>
-                    {% else %}
-                    <div class="amount minus">−{{ tx.amount|abs }} ₽</div>
-                    {% endif %}
-                </div>
-            </div>
-            {% endfor %}
+    <div class="nav-label">Меню</div>
+
+    <a href="/lk" class="nav-item">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Обзор
+    </a>
+
+    <a href="/history" class="nav-item active">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        История операций
+    </a>
+
+    <div class="sidebar-spacer"></div>
+
+    <div class="sidebar-user">
+        <div class="sidebar-user-name">Баланс</div>
+        <div class="sidebar-balance">{{ user.balance }} ₽</div>
+    </div>
+
+    <a href="/logout" class="nav-item" style="border-top: 1px solid rgba(255,255,255,0.08);">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Выйти
+    </a>
+</nav>
+
+<main class="main">
+    <div class="page-header">
+        <div>
+            <div class="page-title">История операций</div>
+            <div class="page-sub">Все пополнения и списания</div>
         </div>
-        {% else %}
-        <div class="empty">Операций пока нет</div>
-        {% endif %}
+        <a href="/lk" class="back-link">← В кабинет</a>
+    </div>
 
-        <div class="back-link">
-            <a href="/lk">← Назад в личный кабинет</a>
+    <div class="summary">
+        <div class="sum-card">
+            <div class="sum-label">Текущий баланс</div>
+            <div class="sum-value green">{{ user.balance }} ₽</div>
+        </div>
+        <div class="sum-card">
+            <div class="sum-label">Потрачено всего</div>
+            <div class="sum-value red">{{ user.sum_sp }} ₽</div>
         </div>
     </div>
+
+    <div class="table-wrap">
+        {% if user.transactions %}
+        <div class="table-head">
+            <div>Описание</div>
+            <div class="col-date">Дата</div>
+            <div style="text-align:right;">Сумма</div>
+        </div>
+        {% for tx in user.transactions %}
+        <div class="tx-row">
+            <div>
+                <div class="tx-desc">{{ tx.description }}</div>
+            </div>
+            <div class="tx-date">{{ tx.created_at.strftime('%d.%m.%Y %H:%M') }}</div>
+            <div class="tx-amount {% if tx.amount > 0 %}plus{% else %}minus{% endif %}">
+                {% if tx.amount > 0 %}+{{ tx.amount }}{% else %}−{{ tx.amount|abs }}{% endif %} ₽
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">📋</div>
+            <div class="empty-state-text">Операций пока нет</div>
+        </div>
+        {% endif %}
+    </div>
+</main>
 
 </body>
 </html>

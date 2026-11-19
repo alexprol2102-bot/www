@@ -4,420 +4,480 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Личный кабинет</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg: #f9fafb;
+            --surface: #ffffff;
+            --accent: #059669;
+            --accent-dark: #047857;
+            --accent-light: #ecfdf5;
+            --text: #111827;
+            --muted: #6b7280;
+            --border: #e5e7eb;
+            --sidebar-bg: #064e3b;
+            --sidebar-text: rgba(255,255,255,0.75);
+            --sidebar-active: rgba(255,255,255,0.12);
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: #0f172a;
-            background-image:
-                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.15) 0px, transparent 50%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            font-family: 'Manrope', system-ui, sans-serif;
+            background: var(--bg);
             min-height: 100vh;
-            color: #334155;
-            padding: 20px;
-        }
-
-        .cabinet-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(12px);
-            padding: 40px 32px;
-            border-radius: 20px;
-            box-shadow:
-                0 20px 25px -5px rgba(0, 0, 0, 0.1),
-                0 8px 10px -6px rgba(0, 0, 0, 0.05),
-                0 0 0 1px rgba(255, 255, 255, 0.4) inset;
-            width: 100%;
-            max-width: 440px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .cabinet-header {
-            text-align: center;
-            margin-bottom: 32px;
-        }
-
-        .cabinet-header .avatar {
-            width: 64px;
-            height: 64px;
-            border-radius: 50%;
-            margin: 0 auto 16px;
             display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
-            color: #ffffff;
-            font-size: 24px;
-            font-weight: 700;
-            letter-spacing: 0.02em;
-            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
         }
 
-        .cabinet-header h2 {
-            font-size: 24px;
-            font-weight: 700;
-            color: #0f172a;
-            letter-spacing: -0.02em;
-            margin-bottom: 8px;
-        }
-
-        .cabinet-header p {
-            font-size: 14px;
-            color: #64748b;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-size: 13px;
-            font-weight: 600;
-            color: #475569;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-        }
-
-        .static-value {
-            width: 100%;
-            padding: 12px 16px;
-            font-size: 15px;
-            font-family: inherit;
-            color: #1e293b;
-            background-color: #f8fafc;
-            border: 1.5px solid #e2e8f0;
-            border-radius: 10px;
-            min-height: 48px;
-            display: flex;
-            align-items: center;
-            word-break: break-word;
-        }
-
-        .balance-card {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 18px 20px;
-            border-radius: 14px;
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(168, 85, 247, 0.08) 100%);
-            border: 1.5px solid rgba(99, 102, 241, 0.2);
-            margin-bottom: 24px;
-        }
-
-        .balance-info {
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: 240px;
+            flex-shrink: 0;
+            background: var(--sidebar-bg);
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            padding: 28px 0;
+            position: fixed;
+            top: 0; bottom: 0; left: 0;
         }
 
-        .balance-label {
-            font-size: 12px;
-            font-weight: 600;
-            color: #64748b;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-        }
-
-        .balance-value {
-            font-size: 26px;
-            font-weight: 700;
-            color: #0f172a;
-            letter-spacing: -0.02em;
-            line-height: 1;
-        }
-
-        .balance-value .currency {
-            font-size: 15px;
-            font-weight: 600;
-            color: #6366f1;
-            margin-left: 4px;
-        }
-
-        .balance-icon {
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
+        .sidebar-logo {
             display: flex;
             align-items: center;
-            justify-content: center;
-            background: rgba(99, 102, 241, 0.12);
+            gap: 10px;
+            padding: 0 24px 32px;
         }
 
-        .balance-icon svg {
-            width: 22px;
-            height: 22px;
-            fill: none;
-            stroke: #6366f1;
-            stroke-width: 2;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-
-        .btn {
-            width: 100%;
-            padding: 12px 20px;
-            border: none;
+        .sidebar-logo-icon {
+            width: 36px; height: 36px;
+            background: rgba(255,255,255,0.15);
             border-radius: 10px;
-            font-size: 15px;
-            font-weight: 600;
-            font-family: inherit;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
+            display: flex; align-items: center; justify-content: center;
         }
 
-        .btn svg {
-            width: 18px;
-            height: 18px;
+        .sidebar-logo-icon svg {
+            width: 20px; height: 20px;
+            stroke: #fff; fill: none;
+            stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+        }
+
+        .sidebar-logo-text {
+            font-size: 18px;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -0.02em;
+        }
+
+        .nav-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: rgba(255,255,255,0.35);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 0 24px 10px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--sidebar-text);
+            text-decoration: none;
+            transition: background 0.15s, color 0.15s;
+            border-radius: 0;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            font-family: inherit;
+        }
+
+        .nav-item:hover {
+            background: var(--sidebar-active);
+            color: #fff;
+        }
+
+        .nav-item.active {
+            background: rgba(5, 150, 105, 0.3);
+            color: #fff;
+        }
+
+        .nav-item svg {
+            width: 16px; height: 16px;
             fill: none;
             stroke: currentColor;
-            stroke-width: 2.2;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
-            color: #ffffff;
-            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
-        }
-
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
-            box-shadow: 0 6px 16px rgba(79, 70, 229, 0.35);
-            transform: translateY(-1px);
-        }
-
-        .btn-primary:active {
-            transform: translateY(0);
-            box-shadow: 0 2px 8px rgba(79, 70, 229, 0.2);
-        }
-
-        .switch-link {
-            margin-top: 28px;
-            padding-top: 20px;
-            border-top: 1px solid #f1f5f9;
-            text-align: center;
-            font-size: 14px;
-            color: #64748b;
-        }
-
-        .switch-link a {
-            color: #6366f1;
-            font-weight: 600;
-            text-decoration: none;
-            margin-left: 4px;
-            transition: color 0.2s ease;
-        }
-
-        .switch-link a:hover {
-            color: #4f46e5;
-            text-decoration: underline;
-        }
-
-        .promo-banner {
-            display: none;
-            margin-bottom: 24px;
-            padding: 14px 16px;
-            border-radius: 12px;
-            text-align: center;
-            font-size: 16px;
-            font-weight: 700;
-            color: #ffffff;
-            background: linear-gradient(135deg, #ef4444 0%, #f59e0b 100%);
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
-        }
-
-        /* ---------- Модальные окна ---------- */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(4px);
-        }
-
-        .modal-content {
-            background: rgba(255, 255, 255, 0.98);
-            margin: 10% auto;
-            padding: 32px;
-            border-radius: 20px;
-            width: 90%;
-            max-width: 420px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-        }
-
-        .modal-header h3 {
-            font-size: 20px;
-            font-weight: 700;
-            color: #0f172a;
-        }
-
-        .close {
-            color: #94a3b8;
-            font-size: 32px;
-            font-weight: 400;
-            cursor: pointer;
-            line-height: 1;
-            transition: color 0.2s ease;
-        }
-
-        .close:hover {
-            color: #475569;
-        }
-
-        .amount-input {
-            width: 100%;
-            padding: 14px 18px;
-            font-size: 18px;
-            font-weight: 600;
-            font-family: inherit;
-            color: #1e293b;
-            background-color: #f8fafc;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            outline: none;
-            transition: all 0.2s ease;
-            margin-bottom: 16px;
-            text-align: center;
-        }
-
-        .amount-input:focus {
-            background-color: #ffffff;
-            border-color: #6366f1;
-            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
-        }
-
-        .quick-amounts {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 24px;
-        }
-
-        .quick-btn {
-            padding: 10px;
-            background-color: #f1f5f9;
-            color: #475569;
-            border: 1.5px solid #e2e8f0;
-            border-radius: 10px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .quick-btn:hover {
-            background-color: #e2e8f0;
-            border-color: #cbd5e1;
-            color: #334155;
-        }
-
-        .quick-btn:active {
-            transform: scale(0.95);
-        }
-
-        /* ---------- Чат с ИИ ---------- */
-        .chat-modal-content {
-            max-width: 560px;
-            margin: 5% auto;
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .chat-modal-content .modal-header {
-            margin-bottom: 16px;
-        }
-
-        .chat-hint {
-            font-size: 12px;
-            color: #64748b;
-            margin-top: 2px;
-        }
-        .chat-balance {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            align-self: flex-end;
-            margin-bottom: 2px;
-            padding: 6px 12px;
-            border-radius: 10px;
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%);
-            border: 1.5px solid rgba(99, 102, 241, 0.25);
-            font-size: 14px;
-            font-weight: 700;
-            color: #0f172a;
-            white-space: nowrap;
-        }
-
-        .chat-balance svg {
-            width: 16px;
-            height: 16px;
-            fill: none;
-            stroke: #6366f1;
             stroke-width: 2;
-            stroke-linecap: round;
-            stroke-linejoin: round;
+            stroke-linecap: round; stroke-linejoin: round;
             flex-shrink: 0;
         }
 
-        .chat-balance .currency {
+        .sidebar-spacer { flex: 1; }
+
+        .sidebar-user {
+            padding: 16px 24px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .sidebar-user-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .sidebar-user-email {
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+            margin-top: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* ===== MAIN ===== */
+        .main {
+            margin-left: 240px;
+            flex: 1;
+            padding: 32px 40px;
+            max-width: calc(100% - 240px);
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text);
+            letter-spacing: -0.03em;
+            margin-bottom: 4px;
+        }
+
+        .page-sub {
+            font-size: 14px;
+            color: var(--muted);
+            margin-bottom: 32px;
+        }
+
+        /* ===== PROMO BANNER ===== */
+        .promo-banner {
+            display: none;
+            padding: 14px 20px;
+            background: linear-gradient(90deg, #059669, #34d399);
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 24px;
+        }
+
+        /* ===== STATS GRID ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px 24px;
+        }
+
+        .stat-label {
+            font-size: 12px;
             font-weight: 600;
-            color: #6366f1;
-            margin-left: 2px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 8px;
         }
 
-        .chat-close {
-            color: #94a3b8;
-            font-size: 32px;
-            cursor: pointer;
+        .stat-value {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--text);
+            letter-spacing: -0.03em;
             line-height: 1;
-            transition: color 0.2s ease;
         }
 
-        .chat-close:hover {
-            color: #475569;
+        .stat-value .currency {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--accent);
+            margin-left: 3px;
+        }
+
+        .stat-value.accent { color: var(--accent); }
+
+        /* ===== SECTION ===== */
+        .section-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* ===== INFO CARD ===== */
+        .info-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .info-row {
+            display: flex;
+            gap: 32px;
+        }
+
+        .info-field {
+            flex: 1;
+        }
+
+        .info-field-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 6px;
+        }
+
+        .info-field-value {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        /* ===== ACTIONS ===== */
+        .actions-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 18px;
+            border-radius: 10px;
+            border: 1.5px solid var(--border);
+            background: var(--surface);
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.15s;
+            font-family: inherit;
+            text-decoration: none;
+        }
+
+        .action-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--accent-light);
+        }
+
+        .action-btn.primary {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+        }
+
+        .action-btn.primary:hover {
+            background: var(--accent-dark);
+            border-color: var(--accent-dark);
+            color: #fff;
+        }
+
+        .action-btn.amber {
+            background: #f59e0b;
+            border-color: #f59e0b;
+            color: #fff;
+        }
+
+        .action-btn.amber:hover {
+            background: #d97706;
+            border-color: #d97706;
+            color: #fff;
+        }
+
+        .action-btn svg {
+            width: 16px; height: 16px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2.2;
+            stroke-linecap: round; stroke-linejoin: round;
+            flex-shrink: 0;
+        }
+
+        /* ===== MODALS ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(4px);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.open { display: flex; }
+
+        .modal-box {
+            background: #fff;
+            border-radius: 16px;
+            padding: 32px;
+            width: 90%;
+            max-width: 420px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+        }
+
+        .modal-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 24px;
+        }
+
+        .modal-head h3 {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text);
+            letter-spacing: -0.02em;
+        }
+
+        .modal-head .hint {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 3px;
+        }
+
+        .modal-close {
+            width: 28px; height: 28px;
+            border-radius: 6px;
+            border: none;
+            background: #f3f4f6;
+            color: #6b7280;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            line-height: 1;
+            transition: background 0.15s;
+            flex-shrink: 0;
+        }
+
+        .modal-close:hover { background: #e5e7eb; color: #374151; }
+
+        .modal-balance {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--accent);
+            background: var(--accent-light);
+            padding: 4px 10px;
+            border-radius: 20px;
+            white-space: nowrap;
+        }
+
+        .modal-head-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .amount-field {
+            width: 100%;
+            padding: 14px 16px;
+            font-size: 20px;
+            font-weight: 700;
+            font-family: inherit;
+            color: var(--text);
+            background: #f9fafb;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            outline: none;
+            text-align: center;
+            transition: border-color 0.15s;
+            margin-bottom: 14px;
+        }
+
+        .amount-field:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(5,150,105,0.12);
+        }
+
+        .quick-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .quick-btn {
+            padding: 9px;
+            background: #f3f4f6;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #374151;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.15s;
+        }
+
+        .quick-btn:hover {
+            background: var(--accent-light);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .btn-confirm {
+            width: 100%;
+            padding: 12px;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .btn-confirm:hover { background: var(--accent-dark); }
+
+        /* ===== CHAT MODAL ===== */
+        .chat-box {
+            max-width: 560px;
+            display: flex;
+            flex-direction: column;
+            height: 80vh;
+            max-height: 600px;
         }
 
         .chat-messages {
-            height: 50vh;
-            min-height: 240px;
+            flex: 1;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
             gap: 10px;
             padding: 14px;
-            background: #f8fafc;
-            border: 1.5px solid #e2e8f0;
-            border-radius: 14px;
+            background: #f9fafb;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
             margin-bottom: 14px;
         }
 
@@ -425,14 +485,14 @@
             margin: auto;
             text-align: center;
             font-size: 14px;
-            color: #94a3b8;
+            color: #9ca3af;
         }
 
         .msg {
             max-width: 85%;
             padding: 10px 14px;
-            border-radius: 14px;
-            font-size: 14.5px;
+            border-radius: 12px;
+            font-size: 14px;
             line-height: 1.5;
             white-space: pre-wrap;
             word-break: break-word;
@@ -440,31 +500,28 @@
 
         .msg-user {
             align-self: flex-end;
-            color: #ffffff;
-            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            background: var(--accent);
+            color: #fff;
             border-bottom-right-radius: 4px;
         }
 
         .msg-ai {
             align-self: flex-start;
-            color: #1e293b;
-            background: #ffffff;
-            border: 1.5px solid #e2e8f0;
+            background: #fff;
+            border: 1.5px solid var(--border);
+            color: var(--text);
             border-bottom-left-radius: 4px;
         }
 
         .msg-error {
             align-self: flex-start;
-            color: #b91c1c;
             background: #fef2f2;
             border: 1.5px solid #fecaca;
+            color: #b91c1c;
             border-bottom-left-radius: 4px;
         }
 
-        .msg-typing {
-            color: #94a3b8;
-            font-style: italic;
-        }
+        .msg-typing { color: #9ca3af; font-style: italic; }
 
         .chat-form {
             display: flex;
@@ -475,278 +532,281 @@
         .chat-input {
             flex: 1;
             resize: none;
-            max-height: 120px;
-            padding: 12px 14px;
-            font-size: 15px;
+            max-height: 100px;
+            padding: 11px 13px;
+            font-size: 14px;
             font-family: inherit;
-            color: #1e293b;
-            background-color: #f8fafc;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
+            color: var(--text);
+            background: #f9fafb;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
             outline: none;
-            transition: all 0.2s ease;
+            transition: border-color 0.15s;
         }
 
         .chat-input:focus {
-            background-color: #ffffff;
             border-color: #f59e0b;
-            box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.15);
+            box-shadow: 0 0 0 3px rgba(245,158,11,0.12);
         }
 
         .chat-send {
-            width: auto;
-            padding: 12px 18px;
+            padding: 11px 16px;
+            background: #f59e0b;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            white-space: nowrap;
         }
 
-        .chat-send:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
+        .chat-send:hover { background: #d97706; }
+        .chat-send:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        @media (max-width: 900px) {
+            .sidebar { display: none; }
+            .main { margin-left: 0; max-width: 100%; padding: 20px; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .actions-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
-    <div class="cabinet-card">
-        <div class="promo-banner" id="promo-banner">🎄 Новогодние скидки! +1000 ₽ на баланс</div>
-        <div class="cabinet-header">
-            <div class="avatar"></div>
-            <h2>Личный кабинет</h2>
-            <p>Управляйте своим профилем и балансом</p>
+<!-- SIDEBAR -->
+<nav class="sidebar">
+    <div class="sidebar-logo">
+        <div class="sidebar-logo-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
         </div>
+        <span class="sidebar-logo-text">SmartPay</span>
+    </div>
 
-        <div class="form-group">
-            <label>Имя пользователя</label>
-            <div class="static-value">{{ user.username }}</div>
+    <div class="nav-label">Меню</div>
+
+    <a href="/lk" class="nav-item active">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Обзор
+    </a>
+
+    <button class="nav-item" id="open-chat-btn">
+        <svg viewBox="0 0 24 24"><path d="M22 2L11 13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        Чат с ИИ
+    </button>
+
+    <button class="nav-item" id="topup-btn">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Пополнить баланс
+    </button>
+
+    <a href="/history" class="nav-item">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        История операций
+    </a>
+
+    <div class="sidebar-spacer"></div>
+
+    <div class="sidebar-user">
+        <div class="sidebar-user-name">{{ user.username }}</div>
+        <div class="sidebar-user-email">{{ user.email if user.email else 'Не указан' }}</div>
+    </div>
+
+    <a href="/logout" class="nav-item" style="border-top: 1px solid rgba(255,255,255,0.08); margin-top: 0;">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Выйти
+    </a>
+</nav>
+
+<!-- MAIN -->
+<main class="main">
+    <div class="promo-banner" id="promo-banner">🎉 Операция выполнена успешно!</div>
+
+    <div class="page-title">Личный кабинет</div>
+    <div class="page-sub">Управляйте балансом и профилем</div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-label">Текущий баланс</div>
+            <div class="stat-value"><span id="balance-display">{{ user.balance }}</span><span class="currency">₽</span></div>
         </div>
-
-        <div class="form-group">
-            <label>Email</label>
-            <div class="static-value">{{ user.email if user.email else 'Не указан' }}</div>
+        <div class="stat-card">
+            <div class="stat-label">Имя пользователя</div>
+            <div class="stat-value" style="font-size:18px;">{{ user.username }}</div>
         </div>
-
-        <div class="balance-card">
-            <div class="balance-info">
-                <span class="balance-label">Текущий баланс</span>
-                <span class="balance-value" id="balance-display">{{ user.balance }}<span class="currency">₽</span></span>
-            </div>
-            <div class="balance-icon">
-                <svg viewBox="0 0 24 24">
-                    <rect x="2" y="6" width="20" height="14" rx="2" ry="2"></rect>
-                    <path d="M2 10h20"></path>
-                    <circle cx="17" cy="15" r="1.5" fill="#6366f1" stroke="none"></circle>
-                </svg>
-            </div>
+        <div class="stat-card">
+            <div class="stat-label">Email</div>
+            <div class="stat-value" style="font-size:14px; font-weight:600; padding-top:6px;">{{ user.email if user.email else 'Не указан' }}</div>
         </div>
+    </div>
 
-        <button type="button" class="btn btn-primary" id="topup-btn" style="margin-bottom: 12px;">
-            <svg viewBox="0 0 24 24">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-            </svg>
+    <div class="section-title">Быстрые действия</div>
+    <div class="actions-grid">
+        <button class="action-btn primary" id="topup-btn2">
+            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Пополнить баланс
         </button>
-
-        <button type="button" class="btn btn-primary" id="open-chat-btn" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); margin-bottom: 12px;">
-            <svg viewBox="0 0 24 24">
-                <path d="M22 2L11 13"></path>
-                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-            </svg>
-            Чат с ИИ (-3 ₽ за сообщение)
+        <button class="action-btn amber" id="open-chat-btn2">
+            <svg viewBox="0 0 24 24"><path d="M22 2L11 13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            Чат с ИИ &nbsp;(-3 ₽/сообщение)
         </button>
-
-        <a href="/history" class="btn btn-primary" id="history-btn" style="text-decoration: none;">
-            <svg viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="10"></circle>
-                <polyline points="12 6 12 12 16 14"></polyline>
-            </svg>
-            История
+        <a href="/history" class="action-btn">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            История операций
         </a>
-
-        <div class="switch-link">
-            <a href="/logout">Выйти из аккаунта</a>
-        </div>
+        <a href="/logout" class="action-btn">
+            <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Выйти из аккаунта
+        </a>
     </div>
+</main>
 
-    <div id="topupModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
+<!-- TOPUP MODAL -->
+<div id="topupModal" class="modal">
+    <div class="modal-box">
+        <div class="modal-head">
+            <div>
                 <h3>Пополнение баланса</h3>
-                <span class="close">&times;</span>
             </div>
-            <input type="number" class="amount-input" id="amount-input" placeholder="Введите сумму" min="1" max="10000">
-            <div class="quick-amounts">
-                <button class="quick-btn" data-amount="100">100 ₽</button>
-                <button class="quick-btn" data-amount="500">500 ₽</button>
-                <button class="quick-btn" data-amount="1000">1000 ₽</button>
-            </div>
-            <button type="button" class="btn btn-primary" id="confirm-topup">Пополнить</button>
+            <button class="modal-close close">×</button>
         </div>
+        <input type="number" class="amount-field" id="amount-input" placeholder="0" min="1" max="10000">
+        <div class="quick-grid">
+            <button class="quick-btn" data-amount="100">100 ₽</button>
+            <button class="quick-btn" data-amount="500">500 ₽</button>
+            <button class="quick-btn" data-amount="1000">1 000 ₽</button>
+        </div>
+        <button class="btn-confirm" id="confirm-topup">Пополнить</button>
     </div>
+</div>
 
-    <div id="chatModal" class="modal">
-        <div class="modal-content chat-modal-content">
-            <div class="modal-header">
-                <div>
-                    <h3>Чат с ИИ</h3>
-                    <div class="chat-hint">Локальная модель · каждое сообщение — 3 ₽</div>
-                </div>
-                <div class="chat-balance">
-                    <svg viewBox="0 0 24 24">
-                        <rect x="2" y="6" width="20" height="14" rx="2" ry="2"></rect>
-                        <path d="M2 10h20"></path>
-                        <circle cx="17" cy="15" r="1.5" fill="#6366f1" stroke="none"></circle>
-                    </svg>
-                    <span id="chat-balance-display">{{ user.balance }}<span class="currency">₽</span></span>
-                </div>
-                <span class="chat-close" id="chat-close" title="Закрыть">&times;</span>
+<!-- CHAT MODAL -->
+<div id="chatModal" class="modal">
+    <div class="modal-box chat-box">
+        <div class="modal-head">
+            <div>
+                <h3>Чат с ИИ</h3>
+                <div class="hint">Локальная модель · 3 ₽ за сообщение</div>
             </div>
-            <div class="chat-messages" id="chat-messages">
-                <div class="chat-empty" id="chat-empty">Напишите сообщение, чтобы начать диалог</div>
-            </div>
-            <div class="chat-form">
-                <textarea id="chat-input" class="chat-input" rows="1" maxlength="2000"
-                          placeholder="Ваше сообщение… (Enter — отправить, Shift+Enter — новая строка)"></textarea>
-                <button type="button" class="btn btn-primary chat-send" id="chat-send" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">Отправить</button>
+            <div class="modal-head-right">
+                <span class="modal-balance" id="chat-balance-display">{{ user.balance }} ₽</span>
+                <button class="modal-close" id="chat-close">×</button>
             </div>
         </div>
+        <div class="chat-messages" id="chat-messages">
+            <div class="chat-empty" id="chat-empty">Напишите сообщение, чтобы начать диалог</div>
+        </div>
+        <div class="chat-form">
+            <textarea id="chat-input" class="chat-input" rows="1" maxlength="2000"
+                      placeholder="Ваше сообщение… (Enter — отправить)"></textarea>
+            <button class="chat-send" id="chat-send">Отправить</button>
+        </div>
     </div>
+</div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.js" integrity="sha512-+k1pnlgt4F1H8L7t3z95o3/KO+o78INEcXTbnoJQ/F2VqDVhWoaiVml/OEHv9HsVgxUaVW+IbiZPUJQfF/YxZw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="{{ url_for('static', filename='script_2.js') }}"></script>
-    <script>
-    (function () {
-        var modal = document.getElementById('chatModal');
-        var box = document.getElementById('chat-messages');
-        var empty = document.getElementById('chat-empty');
-        var input = document.getElementById('chat-input');
-        var sendBtn = document.getElementById('chat-send');
-        var balanceEl = document.getElementById('balance-display');
-        var chatBalanceEl = document.getElementById('chat-balance-display');
-        var history = [];      // [{role: 'user'|'assistant', content: '...'}]
-        var busy = false;
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.js" integrity="sha512-+k1pnlgt4F1H8L7t3z95o3/KO+o78INEcXTbnoJQ/F2VqDVhWoaiVml/OEHv9HsVgxUaVW+IbiZPUJQfF/YxZw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="{{ url_for('static', filename='script_2.js') }}"></script>
+<script>
+(function () {
+    // Открытие модалок из обеих кнопок (сайдбар + основные)
+    ['topup-btn','topup-btn2'].forEach(function(id){
+        var el = document.getElementById(id);
+        if(el) el.addEventListener('click', function(){ document.getElementById('topupModal').classList.add('open'); });
+    });
+    ['open-chat-btn','open-chat-btn2'].forEach(function(id){
+        var el = document.getElementById(id);
+        if(el) el.addEventListener('click', openChat);
+    });
 
-        function setBalance(value) {
-            if (value === undefined || value === null) return;
-            var html = value + '<span class="currency">₽</span>';
-            if (balanceEl) balanceEl.innerHTML = html;
-            if (chatBalanceEl) chatBalanceEl.innerHTML = html;
-        }
+    // --- ЧАТ ---
+    var modal = document.getElementById('chatModal');
+    var box = document.getElementById('chat-messages');
+    var empty = document.getElementById('chat-empty');
+    var input = document.getElementById('chat-input');
+    var sendBtn = document.getElementById('chat-send');
+    var balanceEl = document.getElementById('balance-display');
+    var chatBalanceEl = document.getElementById('chat-balance-display');
+    var history = [];
+    var busy = false;
 
-        // Автоматически зеркалим баланс из карточки в модалку чата.
-        // Это ловит и пополнение (script_2.js), и любые другие изменения #balance-display.
-        if (balanceEl && chatBalanceEl) {
-            var balanceObserver = new MutationObserver(function () {
-                var html = balanceEl.innerHTML;
-                if (chatBalanceEl.innerHTML !== html) {
-                    chatBalanceEl.innerHTML = html;
-                }
+    function setBalance(value) {
+        if (value === undefined || value === null) return;
+        balanceEl.innerHTML = value + '<span class="currency">₽</span>';
+        chatBalanceEl.textContent = value + ' ₽';
+    }
+
+    function addMessage(text, cls) {
+        if (empty) { empty.remove(); empty = null; }
+        var div = document.createElement('div');
+        div.className = 'msg ' + cls;
+        div.textContent = text;
+        box.appendChild(div);
+        box.scrollTop = box.scrollHeight;
+        return div;
+    }
+
+    function openChat() { modal.classList.add('open'); input.focus(); }
+    function closeChat() { modal.classList.remove('open'); }
+
+    function autosize() {
+        input.style.height = 'auto';
+        input.style.height = Math.min(input.scrollHeight, 100) + 'px';
+    }
+
+    async function sendMessage() {
+        var text = input.value.trim();
+        if (!text || busy) return;
+        busy = true;
+        sendBtn.disabled = true;
+        input.value = '';
+        autosize();
+        addMessage(text, 'msg-user');
+        var typing = addMessage('ИИ думает…', 'msg-ai msg-typing');
+        var controller = new AbortController();
+        var timer = setTimeout(function(){ controller.abort(); }, 180000);
+        try {
+            var res = await fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: text, history: history.slice(-6) }),
+                signal: controller.signal
             });
-            balanceObserver.observe(balanceEl, {
-                childList: true,
-                subtree: true,
-                characterData: true
-            });
-        }
-
-        // На всякий случай даём script_2.js возможность обновлять баланс через единую функцию
-        window.setBalance = setBalance;
-
-        function addMessage(text, cls) {
-            if (empty) { empty.remove(); empty = null; }
-            var div = document.createElement('div');
-            div.className = 'msg ' + cls;
-            div.textContent = text;          // textContent — защита от XSS
-            box.appendChild(div);
+            if (res.status === 401) { window.location.href = '/login'; return; }
+            var data = {};
+            try { data = await res.json(); } catch(e){}
+            if (res.ok && data.reply) {
+                typing.className = 'msg msg-ai';
+                typing.textContent = data.reply;
+                history.push({ role: 'user', content: text });
+                history.push({ role: 'assistant', content: data.reply });
+                setBalance(data.new_balance);
+            } else {
+                typing.className = 'msg msg-error';
+                typing.textContent = data.error || ('Ошибка ' + res.status);
+                setBalance(data.new_balance);
+            }
+        } catch(err) {
+            typing.className = 'msg msg-error';
+            typing.textContent = err.name === 'AbortError' ? 'Слишком долго. Попробуйте ещё раз.' : 'Нет связи с сервером.';
+        } finally {
+            clearTimeout(timer);
+            busy = false;
+            sendBtn.disabled = false;
             box.scrollTop = box.scrollHeight;
-            return div;
-        }
-
-        function openChat() {
-            modal.style.display = 'block';
             input.focus();
         }
+    }
 
-        function closeChat() {
-            modal.style.display = 'none';
-        }
-
-        function autosize() {
-            input.style.height = 'auto';
-            input.style.height = Math.min(input.scrollHeight, 120) + 'px';
-        }
-
-        async function sendMessage() {
-            var text = input.value.trim();
-            if (!text || busy) return;
-
-            busy = true;
-            sendBtn.disabled = true;
-            input.value = '';
-            autosize();
-
-            addMessage(text, 'msg-user');
-            var typing = addMessage('ИИ думает…', 'msg-ai msg-typing');
-
-            var controller = new AbortController();
-            var timer = setTimeout(function () { controller.abort(); }, 180000);
-
-            try {
-                var res = await fetch('/api/chat', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: text, history: history.slice(-6) }),
-                    signal: controller.signal
-                });
-
-                if (res.status === 401) {
-                    window.location.href = '/login';
-                    return;
-                }
-
-                var data = {};
-                try { data = await res.json(); } catch (e) {}
-
-                if (res.ok && data.reply) {
-                    typing.className = 'msg msg-ai';
-                    typing.textContent = data.reply;
-                    history.push({ role: 'user', content: text });
-                    history.push({ role: 'assistant', content: data.reply });
-                    setBalance(data.new_balance);
-                } else {
-                    typing.className = 'msg msg-error';
-                    typing.textContent = data.error || ('Ошибка сервера (' + res.status + ')');
-                    setBalance(data.new_balance);
-                }
-            } catch (err) {
-                typing.className = 'msg msg-error';
-                typing.textContent = err.name === 'AbortError'
-                    ? 'ИИ слишком долго отвечает. Попробуйте ещё раз.'
-                    : 'Не удалось связаться с сервером.';
-            } finally {
-                clearTimeout(timer);
-                busy = false;
-                sendBtn.disabled = false;
-                box.scrollTop = box.scrollHeight;
-                input.focus();
-            }
-        }
-
-        document.getElementById('open-chat-btn').addEventListener('click', openChat);
-        document.getElementById('chat-close').addEventListener('click', closeChat);
-        modal.addEventListener('click', function (e) { if (e.target === modal) closeChat(); });
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape' && modal.style.display === 'block') closeChat();
-        });
-        sendBtn.addEventListener('click', sendMessage);
-        input.addEventListener('input', autosize);
-        input.addEventListener('keydown', function (e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
-            }
-        });
-    })();
-    </script>
+    document.getElementById('chat-close').addEventListener('click', closeChat);
+    modal.addEventListener('click', function(e){ if(e.target===modal) closeChat(); });
+    document.addEventListener('keydown', function(e){ if(e.key==='Escape') { closeChat(); document.getElementById('topupModal').classList.remove('open'); } });
+    sendBtn.addEventListener('click', sendMessage);
+    input.addEventListener('input', autosize);
+    input.addEventListener('keydown', function(e){
+        if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); sendMessage(); }
+    });
+})();
+</script>
 </body>
 </html>
